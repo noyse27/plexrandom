@@ -10,6 +10,7 @@ public class PlexConfig
     public string Token { get; set; } = string.Empty;
     public int MinEntries { get; set; } = 10;
     public int DefaultMovieDuration { get; set; } = 90;
+    public string Language { get; set; } = "de";
     public List<PlexLibrary> Libraries { get; set; } = new();
     public List<RecentPlaylist> RecentPlaylists { get; set; } = new();
 }

@@ -1,5 +1,7 @@
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Navigation;
 
 namespace plexrandom;
 
@@ -34,5 +36,11 @@ public partial class MainWindow : Window
             if (vm.PlexToken != TokenPasswordBox.Password)
                 vm.PlexToken = TokenPasswordBox.Password;
         }
+    }
+
+    private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+    {
+        Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+        e.Handled = true;
     }
 }

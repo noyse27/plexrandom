@@ -1,4 +1,4 @@
-﻿<Window x:Class="plexrandom.MainWindow"
+<Window x:Class="plexrandom.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -14,8 +14,11 @@
     </Window.DataContext>
     <Grid Margin="15">
         <TabControl>
-            <!-- Randomize Abteilung -->
-            <TabItem Header="Randomize!">
+            <!-- Randomize Tab -->
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="{DynamicResource Tab_Randomize}" />
+                </TabItem.Header>
                 <Grid Margin="10">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -28,104 +31,169 @@
                     </Grid.RowDefinitions>
 
                     <StackPanel Grid.Row="0" Margin="0,0,0,15">
-                        <TextBlock Text="Bibliothek" FontWeight="Bold" Margin="0,0,0,5" Foreground="{StaticResource AccentBrush}" />
-                        <ComboBox ItemsSource="{Binding Libraries}" 
-                                  SelectedItem="{Binding SelectedLibrary}" 
+                        <TextBlock Text="{DynamicResource Label_Library}" FontWeight="Bold" Margin="0,0,0,5" Foreground="{StaticResource AccentBrush}" />
+                        <ComboBox ItemsSource="{Binding Libraries}"
+                                  SelectedItem="{Binding SelectedLibrary}"
                                   DisplayMemberPath="Title" />
                     </StackPanel>
 
                     <StackPanel Grid.Row="1" Margin="0,0,0,15">
-                        <TextBlock Text="Genre" FontWeight="Bold" Margin="0,0,0,5" Foreground="{StaticResource AccentBrush}" />
-                        <ComboBox ItemsSource="{Binding Genres}" 
+                        <TextBlock Text="{DynamicResource Label_Genre}" FontWeight="Bold" Margin="0,0,0,5" Foreground="{StaticResource AccentBrush}" />
+                        <ComboBox ItemsSource="{Binding Genres}"
                                   SelectedItem="{Binding SelectedGenre}" />
                     </StackPanel>
 
                     <StackPanel Grid.Row="2" Margin="0,0,0,15" Orientation="Horizontal">
-                        <CheckBox IsChecked="{Binding OnlyUnseen}" Content="nur ungesehene" VerticalAlignment="Center" />
-                        
-                        <TextBlock Text="Jahr von:" VerticalAlignment="Center" Margin="20,0,10,0" />
+                        <CheckBox IsChecked="{Binding OnlyUnseen}" Content="{DynamicResource Chk_OnlyUnseen}" VerticalAlignment="Center" />
+
+                        <TextBlock Text="{DynamicResource Label_YearFrom}" VerticalAlignment="Center" Margin="20,0,10,0" />
                         <TextBox Text="{Binding YearFrom, UpdateSourceTrigger=PropertyChanged}" Width="50" VerticalAlignment="Center" />
-                        
-                        <TextBlock Text="bis:" VerticalAlignment="Center" Margin="10,0,10,0" />
+
+                        <TextBlock Text="{DynamicResource Label_YearTo}" VerticalAlignment="Center" Margin="10,0,10,0" />
                         <TextBox Text="{Binding YearTo, UpdateSourceTrigger=PropertyChanged}" Width="50" VerticalAlignment="Center" />
                     </StackPanel>
 
                     <StackPanel Grid.Row="3" Margin="0,0,0,15">
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                            <TextBlock Text="Anzahl Entries in Playlist: " FontWeight="Bold" />
+                            <TextBlock Text="{DynamicResource Label_PlaylistCount}" FontWeight="Bold" />
                             <TextBlock Text="{Binding PlaylistEntryCount}" Foreground="{StaticResource AccentBrush}" FontWeight="Bold" />
                         </StackPanel>
-                        <Slider Minimum="{Binding Config.MinEntries}" 
-                                Maximum="50" 
-                                Value="{Binding PlaylistEntryCount}" 
-                                TickFrequency="5" 
+                        <Slider Minimum="{Binding Config.MinEntries}"
+                                Maximum="50"
+                                Value="{Binding PlaylistEntryCount}"
+                                TickFrequency="5"
                                 IsSnapToTickEnabled="True" />
 
                         <StackPanel Orientation="Horizontal" Margin="0,10,0,5">
-                            <TextBlock Text="Maximale Laufzeit (min): " FontWeight="Bold" />
+                            <TextBlock Text="{DynamicResource Label_MaxDuration}" FontWeight="Bold" />
                             <TextBlock Text="{Binding MaxDuration}" Foreground="{StaticResource AccentBrush}" FontWeight="Bold" />
                         </StackPanel>
-                        <Slider Minimum="60" 
-                                Maximum="300" 
-                                Value="{Binding MaxDuration}" 
-                                TickFrequency="10" 
+                        <Slider Minimum="60"
+                                Maximum="300"
+                                Value="{Binding MaxDuration}"
+                                TickFrequency="10"
                                 IsSnapToTickEnabled="True" />
                     </StackPanel>
 
-                    <Button Grid.Row="4" Content="Randomize!" 
+                    <Button Grid.Row="4" Content="{DynamicResource Btn_Randomize}"
                             Style="{StaticResource PrimaryButton}"
-                            Command="{Binding RandomizeCommand}" 
+                            Command="{Binding RandomizeCommand}"
                             Height="40" Margin="0,0,0,15" />
 
                     <ListView Grid.Row="5" ItemsSource="{Binding PlaylistPreview}" SelectedItem="{Binding SelectedMovie}">
                         <ListView.InputBindings>
-                            <MouseBinding MouseAction="LeftDoubleClick" 
-                                          Command="{Binding PlayMovieCommand}" 
+                            <MouseBinding MouseAction="LeftDoubleClick"
+                                          Command="{Binding PlayMovieCommand}"
                                           CommandParameter="{Binding SelectedMovie}" />
                         </ListView.InputBindings>
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="Platz" DisplayMemberBinding="{Binding PlaylistPosition}" Width="45" />
-                                <GridViewColumn Header="Titel" DisplayMemberBinding="{Binding Title}" Width="300" />
-                                <GridViewColumn Header="Jahr" DisplayMemberBinding="{Binding Year}" Width="55" />
-                                <GridViewColumn Header="Laufzeit" DisplayMemberBinding="{Binding DurationDisplay}" Width="80" />
-                                <GridViewColumn Header="Genres" DisplayMemberBinding="{Binding GenresDisplay}" Width="250" />
+                                <GridViewColumn Width="45">
+                                    <GridViewColumn.Header>
+                                        <TextBlock Text="{DynamicResource Col_Position}" />
+                                    </GridViewColumn.Header>
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding PlaylistPosition}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Width="300">
+                                    <GridViewColumn.Header>
+                                        <TextBlock Text="{DynamicResource Col_Title}" />
+                                    </GridViewColumn.Header>
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Title}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Width="55">
+                                    <GridViewColumn.Header>
+                                        <TextBlock Text="{DynamicResource Col_Year}" />
+                                    </GridViewColumn.Header>
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Year}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Width="80">
+                                    <GridViewColumn.Header>
+                                        <TextBlock Text="{DynamicResource Col_Duration}" />
+                                    </GridViewColumn.Header>
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding DurationDisplay}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Width="250">
+                                    <GridViewColumn.Header>
+                                        <TextBlock Text="{DynamicResource Col_Genres}" />
+                                    </GridViewColumn.Header>
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding GenresDisplay}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
                             </GridView>
                         </ListView.View>
                     </ListView>
 
                     <UniformGrid Grid.Row="6" Columns="2" Margin="0,15,0,0">
-                        <Button Content="Send to Plex" 
-                                Command="{Binding SendCommand}" 
+                        <Button Content="{DynamicResource Btn_SendToPlex}"
+                                Command="{Binding SendCommand}"
                                 Height="40" Margin="0,0,5,0" />
-                        <Button Content="Open entry in Plex client" 
+                        <Button Content="{DynamicResource Btn_OpenInPlex}"
                                 Command="{Binding PlayMovieCommand}"
                                 CommandParameter="{Binding SelectedMovie}"
                                 Height="40" Margin="5,0,0,0" />
                     </UniformGrid>
                 </Grid>
             </TabItem>
-            
-            <!-- Recent Playlists Abteilung -->
-            <TabItem Header="Recent Playlists">
-                <Grid Margin="10">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
 
-                    <ListView Grid.Row="0" ItemsSource="{Binding RecentPlaylists}">
+            <!-- Recent Playlists Tab -->
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="{DynamicResource Tab_RecentPlaylists}" />
+                </TabItem.Header>
+                <Grid Margin="10">
+                    <ListView ItemsSource="{Binding RecentPlaylists}">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="Titel" DisplayMemberBinding="{Binding Title}" Width="400" />
-                                <GridViewColumn Header="Erstellt am" DisplayMemberBinding="{Binding CreatedAt, StringFormat={}{0:dd.MM.yyyy HH:mm}}" Width="150" />
-                                <GridViewColumn Header="Aktionen" Width="100">
+                                <GridViewColumn Width="400">
+                                    <GridViewColumn.Header>
+                                        <TextBlock Text="{DynamicResource Col_PlaylistTitle}" />
+                                    </GridViewColumn.Header>
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Button Content="🗑" 
-                                                    Command="{Binding DataContext.DeletePlaylistCommand, RelativeSource={RelativeSource AncestorType=ListView}}" 
+                                            <TextBlock Text="{Binding Title}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Width="150">
+                                    <GridViewColumn.Header>
+                                        <TextBlock Text="{DynamicResource Col_CreatedAt}" />
+                                    </GridViewColumn.Header>
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding CreatedAt, StringFormat={}{0:dd.MM.yyyy HH:mm}}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Width="100">
+                                    <GridViewColumn.Header>
+                                        <TextBlock Text="{DynamicResource Col_Actions}" />
+                                    </GridViewColumn.Header>
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="🗑"
+                                                    Command="{Binding DataContext.DeletePlaylistCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
                                                     CommandParameter="{Binding}"
-                                                    ToolTip="Playlist in Plex löschen"
-                                                    Background="Transparent" BorderBrush="Transparent" Foreground="Red" 
+                                                    ToolTip="{DynamicResource Tooltip_DeletePlaylist}"
+                                                    Background="Transparent" BorderBrush="Transparent" Foreground="Red"
                                                     FontSize="16" Cursor="Hand" />
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
@@ -136,8 +204,11 @@
                 </Grid>
             </TabItem>
 
-            <!-- Config Abteilung -->
-            <TabItem Header="Config">
+            <!-- Settings Tab -->
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="{DynamicResource Tab_Config}" />
+                </TabItem.Header>
                 <Grid Margin="20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -150,10 +221,11 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <!-- Server -->
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Server:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,15,15" />
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource Label_Server}" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,15,15" />
                     <Grid Grid.Row="0" Grid.Column="1" Margin="0,0,0,15">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -161,19 +233,17 @@
                             <ColumnDefinition Width="100" />
                         </Grid.ColumnDefinitions>
                         <TextBox Grid.Column="0" Text="{Binding Config.Url, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,10,0" />
-                        <TextBlock Grid.Column="1" Text="Port:" VerticalAlignment="Center" Margin="5,0,10,0" />
+                        <TextBlock Grid.Column="1" Text="{DynamicResource Label_Port}" VerticalAlignment="Center" Margin="5,0,10,0" />
                         <TextBox Grid.Column="2" Text="{Binding Config.Port, UpdateSourceTrigger=PropertyChanged}" />
                     </Grid>
 
-                    <!-- Plextoken -->
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Plextoken:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,15,15" />
+                    <!-- Plex Token -->
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource Label_PlexToken}" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,15,15" />
                     <Grid Grid.Row="1" Grid.Column="1" Margin="0,0,0,15">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-
-                        <!-- Input controls -->
                         <Grid Grid.Column="0">
                             <TextBox x:Name="TokenTextBox" Text="{Binding PlexToken, UpdateSourceTrigger=PropertyChanged}">
                                 <TextBox.Style>
@@ -200,36 +270,103 @@
                                 </PasswordBox.Style>
                             </PasswordBox>
                         </Grid>
-
-                        <!-- Toggle Button -->
-                        <Button Grid.Column="1" 
+                        <Button Grid.Column="1"
                                 Command="{Binding ToggleTokenVisibilityCommand}"
-                                Content="👁" 
+                                Content="👁"
                                 FontSize="16"
-                                Width="40" Height="Auto" 
+                                Width="40" Height="Auto"
                                 Margin="10,0,0,0"
                                 Padding="0"
-                                ToolTip="Token anzeigen/verstecken" />
+                                ToolTip="{DynamicResource Tooltip_ToggleToken}" />
                     </Grid>
 
                     <!-- Check Connection -->
                     <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,25">
-                        <Button Content="Check Connection" Command="{Binding CheckConnectionCommand}" Width="160" Height="30" />
+                        <Button Content="{DynamicResource Btn_CheckConnection}" Command="{Binding CheckConnectionCommand}" Width="160" Height="30" />
                         <TextBlock Text="{Binding ConnectionStatus}" Foreground="{Binding ConnectionStatusColor}" Margin="15,0,0,0" VerticalAlignment="Center" FontWeight="Bold" />
                     </StackPanel>
 
                     <!-- Minimum Entries -->
-                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Minimum Entries Playlist:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,15,15" />
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="{DynamicResource Label_MinEntries}" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,15,15" />
                     <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Config.MinEntries, UpdateSourceTrigger=PropertyChanged}" Width="80" HorizontalAlignment="Left" Margin="0,0,0,15" />
 
                     <!-- Default Movie Duration -->
-                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Standard Filmlänge (min):" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,15,15" />
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource Label_DefaultDuration}" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,15,15" />
                     <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Config.DefaultMovieDuration, UpdateSourceTrigger=PropertyChanged}" Width="80" HorizontalAlignment="Left" Margin="0,0,0,15" />
 
+                    <!-- Language Toggle -->
+                    <TextBlock Grid.Row="5" Grid.Column="0" Text="{DynamicResource Label_Language}" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,15,15" />
+                    <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,15">
+                        <Button Content="🇩🇪 Deutsch"
+                                Command="{Binding SetLanguageCommand}"
+                                CommandParameter="de"
+                                Width="100" Height="30" Margin="0,0,10,0" />
+                        <Button Content="🇬🇧 English"
+                                Command="{Binding SetLanguageCommand}"
+                                CommandParameter="en"
+                                Width="100" Height="30" />
+                    </StackPanel>
+
                     <!-- Load Libraries -->
-                    <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" Margin="0,15,0,0">
+                    <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal" Margin="0,15,0,0">
                         <Button Content="{Binding RefreshButtonText}" Command="{Binding RefreshLibrariesCommand}" Height="35" Padding="20,5" />
                         <TextBlock Text="{Binding LibraryStatus}" Foreground="{Binding LibraryStatusColor}" Margin="15,0,0,0" VerticalAlignment="Center" FontWeight="Bold" />
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <!-- About Tab -->
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="{DynamicResource Tab_About}" />
+                </TabItem.Header>
+                <TabItem.DataContext>
+                    <local:AboutViewModel />
+                </TabItem.DataContext>
+                <Grid Margin="40">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="400">
+                        <Image Source="pack://application:,,,/Resources/plexrandom.ico"
+                               Width="64" Height="64"
+                               Margin="0,0,0,20"
+                               HorizontalAlignment="Center" />
+
+                        <TextBlock Text="{Binding AppName}"
+                                   FontSize="24" FontWeight="Bold"
+                                   Foreground="{StaticResource AccentBrush}"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,6" />
+
+                        <TextBlock Text="{Binding AppVersion, StringFormat=Version {0}}"
+                                   FontSize="14"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,30" />
+
+                        <TextBlock Text="{Binding Copyright}"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,15" />
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,8">
+                            <TextBlock Text="Website: " Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" />
+                            <TextBlock VerticalAlignment="Center">
+                                <Hyperlink NavigateUri="{Binding Website}"
+                                           RequestNavigate="Hyperlink_RequestNavigate"
+                                           Foreground="{StaticResource AccentBrush}">
+                                    <TextBlock Text="{Binding Website}" />
+                                </Hyperlink>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock Text="Kontakt: " Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" />
+                            <TextBlock VerticalAlignment="Center">
+                                <Hyperlink NavigateUri="{Binding ContactEmail, StringFormat=mailto:{0}}"
+                                           RequestNavigate="Hyperlink_RequestNavigate"
+                                           Foreground="{StaticResource AccentBrush}">
+                                    <TextBlock Text="{Binding ContactEmail}" />
+                                </Hyperlink>
+                            </TextBlock>
+                        </StackPanel>
                     </StackPanel>
                 </Grid>
             </TabItem>

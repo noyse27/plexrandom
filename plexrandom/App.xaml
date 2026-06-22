@@ -4,6 +4,11 @@
              xmlns:local="clr-namespace:plexrandom"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Localization/Strings.de.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
         <!-- Colors -->
         <SolidColorBrush x:Key="BackgroundBrush" Color="#1F2326" />
         <SolidColorBrush x:Key="SecondaryBackgroundBrush" Color="#2B3035" />
@@ -307,5 +312,7 @@
         <Style TargetType="Slider">
             <Setter Property="Margin" Value="0,10" />
         </Style>
+
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

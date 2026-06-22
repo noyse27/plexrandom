@@ -38,11 +38,12 @@ public class MainViewModel : BaseViewModel
     public MainViewModel()
     {
         LoadConfig();
-        RefreshButtonText = _config.Libraries.Any() ? "Aktualisiere Bibliotheken von Plex" : "Lese Bibliotheken von Plex";
+        LocalizationService.SetLanguage(_config.Language);
+        UpdateRefreshButtonText();
         _playlistEntryCount = _config.MinEntries;
         _maxDuration = _config.DefaultMovieDuration;
         _yearTo = DateTime.Now.Year.ToString();
-        
+
         RefreshLibrariesCommand = new RelayCommand(async _ => await RefreshLibrariesAsync());
         RandomizeCommand = new RelayCommand(async _ => await RandomizeAsync(), _ => SelectedLibrary != null);
         SendCommand = new RelayCommand(async _ => await SendToPlexAsync(), _ => PlaylistPreview.Any());
@@ -50,13 +51,33 @@ public class MainViewModel : BaseViewModel
         PlayMovieCommand = new RelayCommand(async m => await PlayMovieAsync(m as PlexMovie ?? SelectedMovie), m => SelectedMovie != null || (m is PlexMovie));
         CheckConnectionCommand = new RelayCommand(async _ => await CheckConnectionAsync());
         ToggleTokenVisibilityCommand = new RelayCommand(_ => IsTokenVisible = !IsTokenVisible);
-        
+        SetLanguageCommand = new RelayCommand(lang =>
+        {
+            if (lang is string l)
+            {
+                _config.Language = l;
+                LocalizationService.SetLanguage(l);
+                UpdateRefreshButtonText();
+                if (SelectedLibrary != null) _ = LoadGenresAsync();
+                SaveConfig();
+            }
+        });
+
+        LocalizationService.LanguageChanged += (_, _) => UpdateRefreshButtonText();
+
         if (!string.IsNullOrEmpty(_config.Url) && !string.IsNullOrEmpty(_config.Token))
         {
             _plexService.UpdateConfig(_config.Url, _config.Port, _config.Token);
             foreach (var lib in _config.Libraries) Libraries.Add(lib);
             foreach (var playlist in _config.RecentPlaylists) RecentPlaylists.Add(playlist);
         }
+    }
+
+    private void UpdateRefreshButtonText()
+    {
+        RefreshButtonText = _config.Libraries.Any()
+            ? LocalizationService.Get("RefreshBtn_Refresh")
+            : LocalizationService.Get("RefreshBtn_Load");
     }
 
     #region Properties
@@ -202,6 +223,7 @@ public class MainViewModel : BaseViewModel
     public ICommand PlayMovieCommand { get; }
     public ICommand CheckConnectionCommand { get; }
     public ICommand ToggleTokenVisibilityCommand { get; }
+    public ICommand SetLanguageCommand { get; private set; } = null!;
     #endregion
 
     private void LoadConfig()
@@ -226,13 +248,13 @@ public class MainViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Fehler beim Speichern der Konfiguration: {ex.Message}");
+            MessageBox.Show(LocalizationService.Format("Msg_SaveError", ex.Message));
         }
     }
 
     private async Task RefreshLibrariesAsync()
     {
-        LibraryStatus = "Lese...";
+        LibraryStatus = LocalizationService.Get("Status_Loading");
         LibraryStatusColor = "White";
 
         _plexService.UpdateConfig(_config.Url, _config.Port, _config.Token);
@@ -248,7 +270,7 @@ public class MainViewModel : BaseViewModel
                 _config.Libraries.Add(lib);
             }
 
-            RefreshButtonText = "Aktualisiere Bibliotheken von Plex";
+            UpdateRefreshButtonText();
             LibraryStatus = "OK";
             LibraryStatusColor = "LightGreen";
             SaveConfig();
@@ -262,7 +284,7 @@ public class MainViewModel : BaseViewModel
 
     private async Task CheckConnectionAsync()
     {
-        ConnectionStatus = "Prüfe...";
+        ConnectionStatus = LocalizationService.Get("Status_Checking");
         ConnectionStatusColor = "White";
 
         _plexService.UpdateConfig(_config.Url, _config.Port, _config.Token);
@@ -284,10 +306,11 @@ public class MainViewModel : BaseViewModel
     {
         if (SelectedLibrary == null) return;
         var genres = await _plexService.GetGenresAsync(SelectedLibrary.Key);
+        var allGenres = LocalizationService.Get("Status_AllGenres");
         Genres.Clear();
-        Genres.Add("Alle Genres");
+        Genres.Add(allGenres);
         foreach (var g in genres.OrderBy(x => x)) Genres.Add(g);
-        SelectedGenre = "Alle Genres";
+        SelectedGenre = allGenres;
     }
 
     private async Task RandomizeAsync()
@@ -323,7 +346,7 @@ public class MainViewModel : BaseViewModel
         var list = filtered.ToList();
         if (!list.Any())
         {
-            MessageBox.Show("Keine Filme gefunden, die den Kriterien entsprechen.");
+            MessageBox.Show(LocalizationService.Get("Msg_NoMoviesFound"));
             return;
         }
 
@@ -389,11 +412,11 @@ public class MainViewModel : BaseViewModel
             RecentPlaylists.Insert(0, newPlaylist);
             SaveConfig();
             
-            MessageBox.Show("Playlist erfolgreich an Plex gesendet!");
+            MessageBox.Show(LocalizationService.Get("Msg_PlaylistSent"));
         }
         else
         {
-            MessageBox.Show("Fehler beim Erstellen der Playlist.");
+            MessageBox.Show(LocalizationService.Get("Msg_PlaylistSendError"));
         }
     }
 
@@ -401,8 +424,10 @@ public class MainViewModel : BaseViewModel
     {
         if (playlist == null) return;
 
-        var result = MessageBox.Show($"Möchten Sie die Playlist '{playlist.Title}' wirklich aus Plex löschen?", 
-            "Löschen bestätigen", MessageBoxButton.YesNo, MessageBoxImage.Question);
+        var result = MessageBox.Show(
+            LocalizationService.Format("Msg_DeleteConfirm", playlist.Title),
+            LocalizationService.Get("Msg_DeleteTitle"),
+            MessageBoxButton.YesNo, MessageBoxImage.Question);
 
         if (result != MessageBoxResult.Yes) return;
 
@@ -414,13 +439,13 @@ public class MainViewModel : BaseViewModel
             bool success = await _plexService.DeletePlaylistAsync(playlist.Id);
             if (!success)
             {
-                MessageBox.Show("Fehler beim Löschen der Playlist in Plex.");
+                MessageBox.Show(LocalizationService.Get("Msg_DeleteError"));
                 return;
             }
         }
         else
         {
-            MessageBox.Show("Die Playlist existiert bereits nicht mehr in Plex.");
+            MessageBox.Show(LocalizationService.Get("Msg_PlaylistGone"));
         }
 
         // Aus lokaler Liste entfernen (auch wenn sie in Plex schon weg war)
@@ -438,14 +463,14 @@ public class MainViewModel : BaseViewModel
 
         if (client == null)
         {
-            MessageBox.Show("Kein aktiver Plex-Client gefunden. Bitte starten Sie Ihren Plex-Client (z.B. die Plex App auf dem PC oder TV) und stellen Sie sicher, dass in den Einstellungen 'Fernbedienung zulassen' aktiviert ist.");
+            MessageBox.Show(LocalizationService.Get("Msg_NoClient"));
             return;
         }
 
         var success = await _plexService.PlayMediaAsync(movie.RatingKey, client.MachineIdentifier, SelectedLibrary.Key);
         if (!success)
         {
-            MessageBox.Show($"Fehler beim Starten des Films auf {client.Name}.");
+            MessageBox.Show(LocalizationService.Format("Msg_PlayError", client.Name));
         }
     }
 }
