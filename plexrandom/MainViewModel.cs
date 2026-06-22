@@ -15,7 +15,7 @@ public class MainViewModel : BaseViewModel
     private readonly PlexService _plexService = new();
     private readonly string _configPath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-        "PlexRandomizer", "config.json");
+        "PlexRandom", "config.json");
 
     private PlexConfig _config = new();
     private ObservableCollection<PlexLibrary> _libraries = new();
