@@ -13,7 +13,9 @@ namespace plexrandom;
 public class MainViewModel : BaseViewModel
 {
     private readonly PlexService _plexService = new();
-    private readonly string _configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
+    private readonly string _configPath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+        "PlexRandomizer", "config.json");
 
     private PlexConfig _config = new();
     private ObservableCollection<PlexLibrary> _libraries = new();
@@ -243,6 +245,7 @@ public class MainViewModel : BaseViewModel
     {
         try
         {
+            Directory.CreateDirectory(Path.GetDirectoryName(_configPath)!);
             var json = JsonSerializer.Serialize(_config, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(_configPath, json);
         }
