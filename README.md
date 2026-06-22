@@ -4,6 +4,24 @@ A WPF desktop application for Windows that picks random movies from your Plex li
 
 ---
 
+## Screenshots
+
+### Randomize tab — filter by genre, year, duration
+![Randomize tab](docs/screenshots/randomize-de.png)
+
+### Recent Playlists
+![Recent Playlists](docs/screenshots/recent-playlists-de.png)
+
+### Settings (DE / EN)
+| Deutsch | English |
+|---------|---------|
+| ![Settings DE](docs/screenshots/settings-de.png) | ![Settings EN](docs/screenshots/settings-en.png) |
+
+### Playlist created in Plex
+![Playlist in Plex](docs/screenshots/plex-playlist.png)
+
+---
+
 ## Features
 
 - **Random playlist generation** — picks movies from your Plex movie library
@@ -37,7 +55,7 @@ Get the latest release from [GitHub Releases](https://github.com/noyse27/plexran
 4. Click **Check Connection** — status turns green if successful
 5. Click **Load Plex Libraries** — your movie libraries appear in the Randomize tab
 
-Configuration is saved automatically to `config.json` next to the executable.
+Configuration is saved automatically to `%APPDATA%\PlexRandom\config.json`.
 
 > **Note:** `config.json` contains your Plex token — do not share or commit it.
 
