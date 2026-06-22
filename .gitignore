@@ -1,0 +1,25 @@
+# Build output
+bin/
+obj/
+
+# IDE
+.vs/
+.idea/
+*.user
+*.suo
+*.userprefs
+
+# User config (contains Plex token!)
+plexrandom/config.json
+config.json
+
+# Runtime logs
+error_log.txt
+
+# NuGet
+*.nupkg
+packages/
+
+# OS
+Thumbs.db
+.DS_Store
