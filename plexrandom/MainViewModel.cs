@@ -28,7 +28,7 @@ public class MainViewModel : BaseViewModel
     private PlexMovie? _selectedMovie;
     private ObservableCollection<PlexMovie> _playlistPreview = new();
     private ObservableCollection<RecentPlaylist> _recentPlaylists = new();
-    private string _refreshButtonText = "INITIAL";
+    private string _refreshButtonText = string.Empty;
     private string _connectionStatus = string.Empty;
     private string _connectionStatusColor = "White";
     private string _libraryStatus = string.Empty;
@@ -226,7 +226,7 @@ public class MainViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Error saving config: {ex.Message}");
+            MessageBox.Show($"Fehler beim Speichern der Konfiguration: {ex.Message}");
         }
     }
 
@@ -304,7 +304,8 @@ public class MainViewModel : BaseViewModel
             filtered = filtered.Where(m => m.Genres.Contains(SelectedGenre));
         }
 
-        if (MaxDuration < 300)
+        const int maxDurationSliderMax = 300; // slider maximum = "no limit"
+        if (MaxDuration < maxDurationSliderMax)
         {
             filtered = filtered.Where(m => m.Duration <= MaxDuration * 60000);
         }
@@ -326,7 +327,8 @@ public class MainViewModel : BaseViewModel
             return;
         }
 
-        // Gründlicher Zufallslogarithmus
+        // Pick movies by sampling a random year first, then a random movie from that year
+        // This avoids over-representing years with many movies
         var selectedMovies = new List<PlexMovie>();
         var moviesByYear = list.Where(m => m.Year.HasValue)
                                .GroupBy(m => m.Year!.Value)

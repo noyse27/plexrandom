@@ -13,6 +13,7 @@ public class PlexService
     private readonly HttpClient _httpClient;
     private string _baseUrl = string.Empty;
     private string _token = string.Empty;
+    private const string ClientIdentifier = "PlexRandomizer";
 
     public PlexService()
     {
@@ -36,9 +37,9 @@ public class PlexService
             }
             
             // Add port if not already present in the URL
-            if (!string.IsNullOrWhiteSpace(port) && !_baseUrl.Split('/').Last().Contains(":"))
+            if (!string.IsNullOrWhiteSpace(port) && Uri.TryCreate(_baseUrl, UriKind.Absolute, out var parsedUri) && parsedUri.IsDefaultPort)
             {
-                _baseUrl = $"{_baseUrl}:{port}";
+                _baseUrl = $"{parsedUri.Scheme}://{parsedUri.Host}:{port}";
             }
         }
 
@@ -198,7 +199,7 @@ public class PlexService
             
             var request = new HttpRequestMessage(HttpMethod.Get, url);
             request.Headers.Add("X-Plex-Target-Client-Identifier", clientIdentifier);
-            request.Headers.Add("X-Plex-Client-Identifier", "PlexRandomizerWPF");
+            request.Headers.Add("X-Plex-Client-Identifier", ClientIdentifier);
             
             var response = await _httpClient.SendAsync(request);
             return response.IsSuccessStatusCode;

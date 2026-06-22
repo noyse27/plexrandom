@@ -7,6 +7,13 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <UseWPF>true</UseWPF>
         <ApplicationIcon>Resources\plexrandom.ico</ApplicationIcon>
+        <Version>1.0.0</Version>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <FileVersion>1.0.0.0</FileVersion>
+        <Product>Plex Randomizer</Product>
+        <Company>PolzeSoft</Company>
+        <Copyright>© PolzeSoft 2026</Copyright>
+        <Description>Randomize movies from Plex and create playlists</Description>
     </PropertyGroup>
 
     <ItemGroup>
