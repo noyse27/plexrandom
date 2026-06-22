@@ -27,7 +27,7 @@ A WPF desktop application for Windows that picks random movies from your Plex li
 - **Random playlist generation** — picks movies from your Plex movie library
 - **Year-balanced algorithm** — selects a random year first, then a random movie from that year, so no decade dominates
 - **Filters** — genre, year range (from/to), unwatched only, maximum duration
-- **Direct Plex integration** — creates playlists on your Plex server; plays selected movies on any active Plex client via remote control
+- **Direct Plex integration** — creates playlists directly on your Plex server
 - **Recent playlists** — view and delete previously created random playlists
 - **DE/EN language switching** — switch between German and English in the settings tab; preference is saved
 - **Dark theme** — Plex-inspired color scheme
@@ -69,7 +69,6 @@ Configuration is saved automatically to `%APPDATA%\PlexRandom\config.json`.
 3. Adjust the playlist size with the slider
 4. Click **Randomize!** — the movie list is filled
 5. Click **Send to Plex** to create the playlist on your Plex server
-6. Double-click a movie or select it and click **Open in Plex** to start playback on the active Plex client
 
 ### Recent Playlists tab
 - Shows all playlists created by this app
