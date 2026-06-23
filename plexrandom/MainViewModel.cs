@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -36,6 +37,7 @@ public class MainViewModel : BaseViewModel
     private string _libraryStatus = string.Empty;
     private string _libraryStatusColor = "White";
     private bool _isTokenVisible;
+    private string? _lastCreatedPlaylistUrl;
 
     public MainViewModel()
     {
@@ -51,6 +53,11 @@ public class MainViewModel : BaseViewModel
         SendCommand = new RelayCommand(async _ => await SendToPlexAsync(), _ => PlaylistPreview.Any());
         DeletePlaylistCommand = new RelayCommand(async p => await DeletePlaylistAsync(p as RecentPlaylist));
         PlayMovieCommand = new RelayCommand(async m => await PlayMovieAsync(m as PlexMovie ?? SelectedMovie), m => SelectedMovie != null || (m is PlexMovie));
+        OpenInPlexCommand = new RelayCommand(_ =>
+        {
+            if (_lastCreatedPlaylistUrl != null)
+                Process.Start(new ProcessStartInfo(_lastCreatedPlaylistUrl) { UseShellExecute = true });
+        }, _ => _lastCreatedPlaylistUrl != null);
         CheckConnectionCommand = new RelayCommand(async _ => await CheckConnectionAsync());
         ToggleTokenVisibilityCommand = new RelayCommand(_ => IsTokenVisible = !IsTokenVisible);
         SetLanguageCommand = new RelayCommand(lang =>
@@ -223,6 +230,7 @@ public class MainViewModel : BaseViewModel
     public ICommand SendCommand { get; }
     public ICommand DeletePlaylistCommand { get; }
     public ICommand PlayMovieCommand { get; }
+    public ICommand OpenInPlexCommand { get; }
     public ICommand CheckConnectionCommand { get; }
     public ICommand ToggleTokenVisibilityCommand { get; }
     public ICommand SetLanguageCommand { get; private set; } = null!;
@@ -404,17 +412,21 @@ public class MainViewModel : BaseViewModel
         
         if (!string.IsNullOrEmpty(playlistId))
         {
-            var newPlaylist = new RecentPlaylist 
-            { 
-                Id = playlistId, 
-                Title = title, 
-                CreatedAt = DateTime.Now 
+            var newPlaylist = new RecentPlaylist
+            {
+                Id = playlistId,
+                Title = title,
+                CreatedAt = DateTime.Now
             };
-            
+
             _config.RecentPlaylists.Insert(0, newPlaylist);
             RecentPlaylists.Insert(0, newPlaylist);
             SaveConfig();
-            
+
+            var machineId = await _plexService.GetMachineIdentifierAsync();
+            _lastCreatedPlaylistUrl = $"{_plexService.BaseUrl}/web/index.html#!/server/{machineId}/playlist?key=%2Fplaylists%2F{playlistId}&context=source%3Acontent.playlists~0~2";
+            CommandManager.InvalidateRequerySuggested();
+
             MessageBox.Show(LocalizationService.Get("Msg_PlaylistSent"));
         }
         else

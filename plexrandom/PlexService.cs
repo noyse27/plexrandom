@@ -15,6 +15,8 @@ public class PlexService
     private string _token = string.Empty;
     private const string ClientIdentifier = "PlexRandomizer";
 
+    public string BaseUrl => _baseUrl;
+
     public PlexService()
     {
         _httpClient = new HttpClient();
