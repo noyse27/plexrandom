@@ -147,8 +147,7 @@
                                 Command="{Binding SendCommand}"
                                 Height="40" Margin="0,0,5,0" />
                         <Button Content="{DynamicResource Btn_OpenInPlex}"
-                                Command="{Binding PlayMovieCommand}"
-                                CommandParameter="{Binding SelectedMovie}"
+                                Command="{Binding OpenInPlexCommand}"
                                 Height="40" Margin="5,0,0,0" />
                     </UniformGrid>
                 </Grid>
